@@ -67,11 +67,12 @@ CREATE TABLE IF NOT EXISTS notifiche (
 -- Dati di esempio nella tabella Anagrafiche
 INSERT INTO anagrafiche (nome, cognome, sesso, nas_luogo, nas_regione, nas_prov, nas_cap, data_nascita, cod_fiscale, res_luogo, res_regione, res_prov, res_cap, indirizzo, telefono, email, pass_email, id_ruolo)
 VALUES 
-('Isaia', 'Busana', 'M', 'Bellegra', 'Lazio', 'RM', '00030', '1934-08-28', 'BSNSIA34M28A749L', 'Volpeglino', 'Piemonte', 'AL', '15050', 'Via G.Di Breganze, 19', '0131/949127', 'isaia.busana@lycos.it', 'OI35yatfT24C', 1),
-('Dionigi', 'Zen', 'M', 'Riva del Garda', 'Trentino Alto Adige', 'TN', '38066', '2017-11-21', 'ZNEDNG17S21H330J', 'Carapelle', 'Puglia', 'FG', '71041', 'Via G.Keplero, 278', '0881/479753', NULL, 'LY55qwnqM14V', 2),
-('Gesualdo', 'Luis', 'M', 'Loiano', 'Emilia Romagna', 'BO', '40050', '1982-04-30', 'LSUGLD82D30E655Q', 'Moliterno', 'Basilicata', 'PZ', '85047', 'Via I.Lanza, 29/g', '0971/203262', 'g.luis@gmail.it', 'XA21keiuJ68E', 2),
-('Ausilia', 'Ghidoni', 'F', 'Molise', 'Molise', 'CB', '86020', '1997-08-04', 'GHDSLA97M44F294I', 'Carrù', 'Piemonte', 'CN', '12061', 'Via A.Brofferio, 89', '0173/169365', 'a.ghidoni@gmail.it', 'EW37xtppX46B', 2),
-('Pierluigi', 'Bisio', 'M', 'Bova', 'Calabria', 'RC', '89033', '1938-08-14', 'BSIPLG38M14B097D', 'Montebello Vicentino', 'Veneto', 'VI', '36054', 'Via A.Greppi, 295', '0444/799978', 'pierluigi.bisio@katamail.it', 'KY08xrhmY44N', 2);
+('Isaia', 'Busana', 'M', 'Bellegra', 'Lazio', 'RM', '00030', '1934-08-28', 'BSNSIA34M28A749L', 'Volpeglino', 'Piemonte', 'AL', '15050', 'Via G.Di Breganze, 19', '0131/949127', 'isaia.busana@lycos.it', SHA2('OI35yatfT24C', 256), 1),
+('Dionigi', 'Zen', 'M', 'Riva del Garda', 'Trentino Alto Adige', 'TN', '38066', '2017-11-21', 'ZNEDNG17S21H330J', 'Carapelle', 'Puglia', 'FG', '71041', 'Via G.Keplero, 278', '0881/479753', NULL, SHA2('LY55qwnqM14V', 256), 2),
+('Gesualdo', 'Luis', 'M', 'Loiano', 'Emilia Romagna', 'BO', '40050', '1982-04-30', 'LSUGLD82D30E655Q', 'Moliterno', 'Basilicata', 'PZ', '85047', 'Via I.Lanza, 29/g', '0971/203262', 'g.luis@gmail.it', SHA2('XA21keiuJ68E', 256), 2),
+('Ausilia', 'Ghidoni', 'F', 'Molise', 'Molise', 'CB', '86020', '1997-08-04', 'GHDSLA97M44F294I', 'Carrù', 'Piemonte', 'CN', '12061', 'Via A.Brofferio, 89', '0173/169365', 'a.ghidoni@gmail.it', SHA2('EW37xtppX46B', 256), 2),
+('Pierluigi', 'Bisio', 'M', 'Bova', 'Calabria', 'RC', '89033', '1938-08-14', 'BSIPLG38M14B097D', 'Montebello Vicentino', 'Veneto', 'VI', '36054', 'Via A.Greppi, 295', '0444/799978', 'pierluigi.bisio@katamail.it', SHA2('KY08xrhmY44N', 256), 2);
+
 
 -- Tabella per le sessioni
 CREATE TABLE IF NOT EXISTS sessions (

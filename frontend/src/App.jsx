@@ -26,7 +26,12 @@ function App() {
                 isAuthenticated ? (
                   <Navigate to="/anagrafiche" replace />
                 ) : (
-                  <LoginPage onLogin={handleLogin} />
+                  <>
+                    {/* <AnagraficheForm /> */}
+                    {/* <AnagraficheList />  */}
+                    <LoginPage onLogin={handleLogin} />
+                  </>
+                  
                 )
               }
             />

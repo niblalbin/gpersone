@@ -29,6 +29,7 @@ return [
     'Laminas\\ApiTools\\Rpc',
     'Laminas\\ApiTools\\Versioning',
     'Laminas\\ZendFrameworkBridge',
+    'LmcCors',
     'Application',
     'gpersone',
 ];

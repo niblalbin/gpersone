@@ -2,14 +2,18 @@
 
 namespace gpersone\V1\Rest\Session;
 
-use Laminas\Db\Adapter\Adapter;
 use Psr\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\TableGateway\TableGateway;
 
-class SessionResourceFactory
+class SessionResourceFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $dbAdapter = $container->get(Adapter::class);
-        return new SessionResource($dbAdapter);
+        $dbAdapter = $container->get(AdapterInterface::class);
+        $tableGateway = new TableGateway('session', $dbAdapter);
+
+        return new SessionResource($dbAdapter, $tableGateway);
     }
 }
