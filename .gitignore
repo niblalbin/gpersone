@@ -8,7 +8,6 @@ yarn-error.log
 pnpm-lock.yaml
 backend/vendor/
 composer.phar
-backend/data/cache/
 backend/data/logs/
 docker-compose.override.yml
 .env
