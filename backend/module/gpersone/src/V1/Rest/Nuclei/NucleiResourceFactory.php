@@ -1,18 +1,18 @@
 <?php
-namespace gpersone\V1\Rest\Anagrafiche;
+namespace gpersone\V1\Rest\Nuclei;
 
 use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 
-class AnagraficheResourceFactory implements FactoryInterface
+class NucleiResourceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $dbAdapter = $container->get(AdapterInterface::class);
-        $tableGateway = new TableGateway('anagrafiche', $dbAdapter);
+        $tableGateway = new TableGateway('nuclei_familiari', $dbAdapter);
 
-        return new AnagraficheResource($dbAdapter, $tableGateway);
+        return new NucleiResource($dbAdapter, $tableGateway);
     }
 }

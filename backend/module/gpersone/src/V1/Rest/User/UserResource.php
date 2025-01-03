@@ -1,45 +1,22 @@
 <?php
-namespace gpersone\V1\Rest\Ruoli;
+namespace gpersone\V1\Rest\User;
 
-use Laminas\ApiTools\Rest\AbstractResourceListener;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Laminas\ApiTools\Rest\AbstractResourceListener;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Adapter\Adapter;
-use Laminas\Stdlib\Parameters;
+use Laminas\ApiTools\ApiProblem\ApiProblemException;
 use gpersone\V1\Rest\Session\SessionResource;
 
-class RuoliResource extends AbstractResourceListener
+class UserResource extends AbstractResourceListener
 {
     protected $dbAdapter;
     protected $tableGateway;
-
-    public function __construct(Adapter $dbAdapter)
+    
+    public function __construct(Adapter $dbAdapter, TableGateway $tableGateway)
     {
         $this->dbAdapter = $dbAdapter;
-        $this->tableGateway = new TableGateway('ruoli', $this->dbAdapter);
-    }
-
-    public function checkRuolo($token){
-        try {
-            // verifico se il token è ancora valido
-            $es = new SessionResource($this->dbAdapter);
-            $esito = $es->checkSession($token);
-            if($esito != true){
-                return new ApiProblem(500, 'Token scaduto, riavvia la sessione.');
-            }
-
-            $sql = 'SELECT s.token, s.user_id, s.expires_at, a.* FROM sessions AS s LEFT JOIN anagrafiche AS a on a.id = s.user_id WHERE token = ? AND a.id_ruolo = 1';
-            $stmt = $this->dbAdapter->createStatement($sql, [$token]);
-            $res = $stmt->execute()->current();
-
-            if (!$res) {
-                return ['error' => 'Token non trovato o permessi insufficenti'];
-            }
-
-            return $res;
-        } catch (\Exception $e) {
-            return ['error' => 'Errore interno del server'];
-        }
+        $this->tableGateway = $tableGateway;
     }
 
     /**
@@ -83,7 +60,7 @@ class RuoliResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
-        return new ApiProblem(405, 'The GET method has not been defined for individual resources');
+        return 'fetch user';
     }
 
     /**
@@ -94,7 +71,53 @@ class RuoliResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        return new ApiProblem(405, 'The GET method has not been defined for collections');
+        $headers = getallheaders();
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+
+        $token = trim($authHeader);
+
+        if (!$token) {
+            return new ApiProblem(401, 'Token mancante o non valido');
+        }
+
+        // verifico se il token è ancora valido
+        $es = new SessionResource($this->dbAdapter);
+        $esito = $es->checkSession($token);
+        if($esito != true){
+            return new ApiProblem(500, 'Token scaduto, riavvia la sessione.');
+        }
+
+        try {
+            // query per il recupero dell'utente, ricerca tramite token
+            $sql = 'SELECT 
+                        a.id,
+                        a.nome,
+                        a.cognome,
+                        a.sesso,
+                        a.nas_luogo,
+                        a.nas_regione,
+                        a.nas_prov,
+                        a.nas_cap,
+                        a.data_nascita,
+                        a.cod_fiscale,
+                        a.res_luogo,
+                        a.res_regione,
+                        a.res_prov,
+                        a.res_cap,
+                        a.indirizzo,
+                        a.telefono,
+                        a.email,
+                        a.id_ruolo
+                    FROM anagrafiche a
+                    LEFT JOIN sessions s ON s.user_id = a.id
+                    WHERE s.token = ?;';
+            $stmt = $this->dbAdapter->createStatement($sql, [$token]);
+            $result = $stmt->execute()->current();
+
+            return [$result];
+        } catch (\Throwable $th) {
+            return new ApiProblem(500, 'Errore interno del server.');
+        }
     }
 
     /**

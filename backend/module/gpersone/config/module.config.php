@@ -5,6 +5,8 @@ return [
             \gpersone\V1\Rest\Anagrafiche\AnagraficheResource::class => \gpersone\V1\Rest\Anagrafiche\AnagraficheResourceFactory::class,
             \gpersone\V1\Rest\Ruoli\RuoliResource::class => \gpersone\V1\Rest\Ruoli\RuoliResourceFactory::class,
             \gpersone\V1\Rest\Session\SessionResource::class => \gpersone\V1\Rest\Session\SessionResourceFactory::class,
+            \gpersone\V1\Rest\User\UserResource::class => \gpersone\V1\Rest\User\UserResourceFactory::class,
+            \gpersone\V1\Rest\Nuclei\NucleiResource::class => \gpersone\V1\Rest\Nuclei\NucleiResourceFactory::class,
         ],
     ],
     'router' => [
@@ -36,6 +38,24 @@ return [
                     ],
                 ],
             ],
+            'gpersone.rest.user' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/user[/:user_id]',
+                    'defaults' => [
+                        'controller' => 'gpersone\\V1\\Rest\\User\\Controller',
+                    ],
+                ],
+            ],
+            'gpersone.rest.nuclei' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/nuclei[/:nuclei_id]',
+                    'defaults' => [
+                        'controller' => 'gpersone\\V1\\Rest\\Nuclei\\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'api-tools-versioning' => [
@@ -43,6 +63,8 @@ return [
             0 => 'gpersone.rest.anagrafiche',
             1 => 'gpersone.rest.ruoli',
             2 => 'gpersone.rest.session',
+            3 => 'gpersone.rest.user',
+            4 => 'gpersone.rest.nuclei',
         ],
     ],
     'api-tools-rest' => [
@@ -112,12 +134,58 @@ return [
             'collection_class' => \gpersone\V1\Rest\Session\SessionCollection::class,
             'service_name' => 'session',
         ],
+        'gpersone\\V1\\Rest\\User\\Controller' => [
+            'listener' => \gpersone\V1\Rest\User\UserResource::class,
+            'route_name' => 'gpersone.rest.user',
+            'route_identifier_name' => 'user_id',
+            'collection_name' => 'user',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \gpersone\V1\Rest\User\UserEntity::class,
+            'collection_class' => \gpersone\V1\Rest\User\UserCollection::class,
+            'service_name' => 'user',
+        ],
+        'gpersone\\V1\\Rest\\Nuclei\\Controller' => [
+            'listener' => \gpersone\V1\Rest\Nuclei\NucleiResource::class,
+            'route_name' => 'gpersone.rest.nuclei',
+            'route_identifier_name' => 'nuclei_id',
+            'collection_name' => 'nuclei',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \gpersone\V1\Rest\Nuclei\NucleiEntity::class,
+            'collection_class' => \gpersone\V1\Rest\Nuclei\NucleiCollection::class,
+            'service_name' => 'nuclei',
+        ],
     ],
     'api-tools-content-negotiation' => [
         'controllers' => [
             'gpersone\\V1\\Rest\\Anagrafiche\\Controller' => 'HalJson',
             'gpersone\\V1\\Rest\\Ruoli\\Controller' => 'HalJson',
             'gpersone\\V1\\Rest\\Session\\Controller' => 'HalJson',
+            'gpersone\\V1\\Rest\\User\\Controller' => 'HalJson',
+            'gpersone\\V1\\Rest\\Nuclei\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
             'gpersone\\V1\\Rest\\Anagrafiche\\Controller' => [
@@ -135,6 +203,16 @@ return [
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
+            'gpersone\\V1\\Rest\\User\\Controller' => [
+                0 => 'application/vnd.gpersone.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
+            'gpersone\\V1\\Rest\\Nuclei\\Controller' => [
+                0 => 'application/vnd.gpersone.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'gpersone\\V1\\Rest\\Anagrafiche\\Controller' => [
@@ -146,6 +224,14 @@ return [
                 1 => 'application/json',
             ],
             'gpersone\\V1\\Rest\\Session\\Controller' => [
+                0 => 'application/vnd.gpersone.v1+json',
+                1 => 'application/json',
+            ],
+            'gpersone\\V1\\Rest\\User\\Controller' => [
+                0 => 'application/vnd.gpersone.v1+json',
+                1 => 'application/json',
+            ],
+            'gpersone\\V1\\Rest\\Nuclei\\Controller' => [
                 0 => 'application/vnd.gpersone.v1+json',
                 1 => 'application/json',
             ],
@@ -187,6 +273,30 @@ return [
                 'entity_identifier_name' => 'id',
                 'route_name' => 'gpersone.rest.session',
                 'route_identifier_name' => 'session_id',
+                'is_collection' => true,
+            ],
+            \gpersone\V1\Rest\User\UserEntity::class => [
+                'entity_identifier_name' => 'id',
+                'route_name' => 'gpersone.rest.user',
+                'route_identifier_name' => 'user_id',
+                'hydrator' => \Laminas\Hydrator\ArraySerializableHydrator::class,
+            ],
+            \gpersone\V1\Rest\User\UserCollection::class => [
+                'entity_identifier_name' => 'id',
+                'route_name' => 'gpersone.rest.user',
+                'route_identifier_name' => 'user_id',
+                'is_collection' => true,
+            ],
+            \gpersone\V1\Rest\Nuclei\NucleiEntity::class => [
+                'entity_identifier_name' => 'id',
+                'route_name' => 'gpersone.rest.nuclei',
+                'route_identifier_name' => 'nuclei_id',
+                'hydrator' => \Laminas\Hydrator\ArraySerializableHydrator::class,
+            ],
+            \gpersone\V1\Rest\Nuclei\NucleiCollection::class => [
+                'entity_identifier_name' => 'id',
+                'route_name' => 'gpersone.rest.nuclei',
+                'route_identifier_name' => 'nuclei_id',
                 'is_collection' => true,
             ],
         ],
@@ -696,5 +806,8 @@ return [
                 'validators' => [],
             ],
         ],
+    ],
+    'api-tools-mvc-auth' => [
+        'authorization' => [],
     ],
 ];

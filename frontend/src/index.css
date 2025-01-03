@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Scrollbar personalizzata */
+.scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-thumb-dark {
+    scrollbar-color: #374151 #122237;
+  }
+  
+  .scrollbar-track-dark {
+    background-color: #152031; 
+  }

@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8080";
+const API_URL = "http://localhost:8080";
 
 // Funzione per il login
 export async function login(email, password) {
@@ -11,30 +11,19 @@ export async function login(email, password) {
       body: JSON.stringify({ email, password }),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || "Errore di rete");
+    let json_response = await response.json();
+
+    if (!response.ok || !json_response.token) {
+      const errorData = json_response.detail;
+      throw new Error(errorData || "Errore di rete");
     }
 
     // Restituisce il token e la data di scadenza
-    return await response.json();
+    return json_response;
   } catch (error) {
-    console.error("Errore durante il login:", error);
+    console.log("Errore durante il login:", error);
     throw error;
   }
-}
-
-// Funzione per verificare il token salvato
-export function isLoggedIn() {
-  const token = localStorage.getItem("authToken");
-  const expiresAt = localStorage.getItem("expiresAt");
-
-  if (!token || !expiresAt) {
-    return false;
-  }
-
-  const now = new Date().toISOString();
-  return now < expiresAt;
 }
 
 // Salva il token nel localStorage
@@ -47,11 +36,17 @@ export function saveSession(token, expiresAt) {
 export function logout() {
   localStorage.removeItem("authToken");
   localStorage.removeItem("expiresAt");
+  window.location.href = '/';
 }
 
 export const anagraficheService = {
   fetchAll: async () => {
-    const response = await fetch(`${API_URL}/anagrafiche`);
+    const response = await fetch(`${API_URL}/anagrafiche`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${localStorage.getItem("authToken")}`,
+      },
+    });
     if (!response.ok) {
       throw new Error("Errore nel recupero anagrafiche");
     }
@@ -60,7 +55,10 @@ export const anagraficheService = {
   create: async (data) => {
     const response = await fetch(`${API_URL}/anagrafiche`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `${localStorage.getItem("authToken")}`,
+      },
       body: JSON.stringify(data),
     });
     if (!response.ok) {
@@ -68,5 +66,92 @@ export const anagraficheService = {
     }
     return response.json();
   },
-  // update, delete...
+  fetch: async () => {
+    const response = await fetch(`${API_URL}/anagrafiche`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${localStorage.getItem("authToken")}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Errore nel recupero dell'anagrafica");
+    }
+    return response.json();
+  }
+};
+
+export const loadSession = () => {
+  const token = localStorage.getItem("authToken");
+  const expires_at = localStorage.getItem("expiresAt");
+  return { token, expires_at };
+};
+
+export const clearSession = () => {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("expiresAt");
+};
+
+export async function verifyToken(token) {
+  try {
+    const response = await fetch(`${API_URL}/session`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${token}`,
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.isValid;
+    } else {
+      throw new Error("Errore nella verifica del token");
+    }
+  } catch (error) {
+    console.error("Errore nella verifica del token:", error);
+    return false;
+  }
+}
+
+export const nucleiService = {
+  fetchAll: async () => {
+    const response = await fetch(`${API_URL}/nuclei`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${localStorage.getItem("authToken")}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Errore nel recupero dei nuclei");
+    }
+    return response.json();
+  },
+  create: async (data) => {
+    const response = await fetch(`${API_URL}/nuclei`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `${localStorage.getItem("authToken")}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error("Errore nella creazione del nucleo");
+    }
+    return response.json();
+  },
+  fetch: async () => {
+    const response = await fetch(`${API_URL}/nuclei`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${localStorage.getItem("authToken")}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Errore nel recupero del nucleo");
+    }
+    return response.json();
+  }
 };
