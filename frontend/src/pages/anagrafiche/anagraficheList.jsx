@@ -19,7 +19,7 @@ function AnagraficheList() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['anagrafiche'],
     queryFn: anagraficheService.fetchAll,
     staleTime: 5 * 60 * 1000,
@@ -69,8 +69,8 @@ function AnagraficheList() {
     if (!window.confirm("Sei sicuro di voler eliminare questa anagrafica?")) return;
     try {
       await anagraficheService.delete(id);
-      queryClient.invalidateQueries({ queryKey: ['anagrafiche'] });
       toast.success("Anagrafica eliminata con successo!");
+      refetch();
     } catch (error) {
       toast.error("Errore nell'eliminazione dell'anagrafica.");
     }
@@ -86,8 +86,9 @@ function AnagraficheList() {
         toast.success("Anagrafica aggiornata con successo!");
       }
       setIsModalOpen(false);
-      queryClient.invalidateQueries({ queryKey: ['anagrafiche'] });
+      refetch();
     } catch (error) {
+      console.error("Errore durante l'operazione:", error);
       toast.error("Errore durante l'operazione.");
     }
   };

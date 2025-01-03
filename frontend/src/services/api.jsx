@@ -78,7 +78,34 @@ export const anagraficheService = {
       throw new Error("Errore nel recupero dell'anagrafica");
     }
     return response.json();
-  }
+  },
+  update: async (id, data) => {
+    const response = await fetch(`${API_URL}/anagrafiche/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${localStorage.getItem("authToken")}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error("Errore nell'aggiornamento dell'anagrafica");
+    }
+    return response.json();
+  },
+  delete: async (id) => {
+    const response = await fetch(`${API_URL}/anagrafiche/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${localStorage.getItem("authToken")}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Errore nell'eliminazione dell'anagrafica");
+    }
+    return 'anagrafica eliminata';
+  },
 };
 
 export const loadSession = () => {
